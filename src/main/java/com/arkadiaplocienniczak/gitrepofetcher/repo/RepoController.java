@@ -20,7 +20,7 @@ public class RepoController {
 
     @GetMapping("/getNotForkedRepos/{owner}")
     public List<Repo> getNotForkedRepos(@PathVariable String owner) {
-        return repoService.getNoForkedRepos();
+        return repoService.getNotForkedRepos(owner);
     }
 
 }
