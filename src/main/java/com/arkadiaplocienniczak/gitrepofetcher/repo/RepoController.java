@@ -15,7 +15,7 @@ public class RepoController {
 
     @GetMapping("/getAllRepos/{owner}")
     public List<Repo> getAllRepos(@PathVariable String owner) {
-        return repoService.getAllRepos();
+        return repoService.getAllRepos(owner);
     }
 
     @GetMapping("/getNotForkedRepos/{owner}")

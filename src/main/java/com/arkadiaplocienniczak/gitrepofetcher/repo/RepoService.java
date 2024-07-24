@@ -1,6 +1,6 @@
 package com.arkadiaplocienniczak.gitrepofetcher.repo;
 
-import jakarta.annotation.PostConstruct;
+import com.arkadiaplocienniczak.gitrepofetcher.config.ClientConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,8 +10,10 @@ import java.util.List;
 public class RepoService {
 
     private Repo repo;
+    private ClientConfig clientConfig;
 
-    public List<Repo> getAllRepos() {
+
+    public List<Repo> getAllRepos(String owner) {
         List<Repo> repoList = new ArrayList<>();
         repo.getName();
         repo.getOwnerName();
