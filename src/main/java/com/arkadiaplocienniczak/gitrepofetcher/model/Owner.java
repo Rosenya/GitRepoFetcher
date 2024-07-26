@@ -1,4 +1,4 @@
-package com.arkadiaplocienniczak.gitrepofetcher.owner;
+package com.arkadiaplocienniczak.gitrepofetcher.model;
 
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

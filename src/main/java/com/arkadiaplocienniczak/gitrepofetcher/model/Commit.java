@@ -1,4 +1,4 @@
-package com.arkadiaplocienniczak.gitrepofetcher.branch;
+package com.arkadiaplocienniczak.gitrepofetcher.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
