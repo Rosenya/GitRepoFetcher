@@ -7,13 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class BranchMapper {
 
-    public BranchDTO branchToDTO(Branch branch) {
-        BranchDTO branchDTO = new BranchDTO();
-        branchDTO.setName(branch.getName());
-        branchDTO.setCommit(branch.getCommit());
-        return branchDTO;
-    }
-
     public Branch branchDTOToBranch(BranchDTO branchDTO) {
         Branch branch = new Branch();
         branch.setName(branchDTO.getName());

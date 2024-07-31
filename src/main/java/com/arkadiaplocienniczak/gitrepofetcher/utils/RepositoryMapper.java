@@ -16,13 +16,4 @@ public class RepositoryMapper {
         return repoDTO;
     }
 
-//    public Repository repoDTOToRepo(RepositoryDTO repoDTO) {
-//        Repository repo = new Repository();
-//        repo.setRepositoryName(repoDTO.getRepositoryName());
-//        repo.setForked(repoDTO.isForked());
-//        repo.setOwnerLogin(repoDTO.getOwnerLogin());
-//        repo.setBranches(repoDTO.getBranches());
-//        return repo;
-//    }
-
 }

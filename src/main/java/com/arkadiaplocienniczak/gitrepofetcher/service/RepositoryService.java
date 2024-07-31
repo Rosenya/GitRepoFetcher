@@ -5,12 +5,17 @@ import com.arkadiaplocienniczak.gitrepofetcher.model.BranchDTO;
 import com.arkadiaplocienniczak.gitrepofetcher.model.RepositoryDTO;
 import com.arkadiaplocienniczak.gitrepofetcher.utils.BranchMapper;
 import com.arkadiaplocienniczak.gitrepofetcher.utils.RepositoryMapper;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 @Service
 @AllArgsConstructor
@@ -20,33 +25,13 @@ public class RepositoryService {
     private final RepositoryMapper repositoryMapper;
     private final BranchMapper branchMapper;
 
-//    public List<RepositoryDTO> getNotForkedRepos(String owner) {
-//        List<RepositoryDTO> notForkedRepositoryList = getRepositoryList(owner);
-//        return notForkedRepositoryList.stream()
-//                .filter(repositoryDTO -> !repositoryDTO.isForked())
-//                .map(repositoryDTO -> {
-//                    List<BranchDTO> branches = getBranchesForRepo(owner, repositoryDTO.getRepositoryName());
-//                    repositoryDTO.setBranches(branches);
-//                    return repositoryDTO;
-//                })
-//                .map((RepositoryDTO repo) -> repositoryMapper.repoToDTO(repo))
-//                .collect(Collectors.toList());
-//    }
-//
     public List<RepositoryDTO> getNotForkedRepos(String owner) {
         List<RepositoryDTO> notForkedRepositoryList = getRepositoryList(owner);
-
-
         notForkedRepositoryList = notForkedRepositoryList.stream()
+                .map(repositoryMapper::repoToDTO)
                 .filter(repositoryDTO -> !repositoryDTO.isForked())
                 .toList();
-
-        notForkedRepositoryList.forEach(repositoryDTO -> {
-            List<BranchDTO> branches = getBranchesForRepo(owner, repositoryDTO.getRepositoryName());
-            repositoryDTO.setBranches(branches);
-        });
-
-
+        notForkedRepositoryList.forEach(getRepositoryDTOConsumer(owner));
         return notForkedRepositoryList;
     }
 
@@ -58,6 +43,12 @@ public class RepositoryService {
                         .queryParam("per_page", 100)
                         .build(owner))
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response ->
+                            Mono.error(new RuntimeException("Client error: " + response.statusCode()))
+                )
+                .onStatus(HttpStatusCode::is5xxServerError,  response ->
+                        Mono.error(new RuntimeException("Server error: " + response.statusCode()))
+                )
                 .bodyToFlux(RepositoryDTO.class)
                 .collectList()
                 .block();
@@ -74,4 +65,15 @@ public class RepositoryService {
                 .block();
     }
 
+    private Consumer<RepositoryDTO> getRepositoryDTOConsumer(String owner) {
+        return repositoryDTO -> {
+            List<BranchDTO> branches = getBranchesForRepo(owner, repositoryDTO.getRepositoryName());
+            branches.stream()
+                    .map(branchMapper::branchDTOToBranch)
+                    .toList();
+            repositoryDTO.setBranches(branches);
+        };
+    }
+
 }
+
